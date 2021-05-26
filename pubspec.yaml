@@ -1,9 +1,9 @@
 name: rapidoc_utils
 description: Some common used classes
 version: 0.0.1
-authors: "Oualitsen Ramdane"
-homepage: "https://rapidoc.app"
 
+homepage: "https://rapidoc.app"
+repository: "https://github.com/Oualitsen/rapidoc-utils"
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
