@@ -8,29 +8,16 @@ import 'package:image_cropper/image_cropper.dart';
 
 import 'package:photo_view/photo_view.dart';
 import 'package:rapidoc_utils/alerts/alert_vertical_widget.dart';
+import 'package:rapidoc_utils/lang/lang.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const LOC_STORAGE_KEY = 'image';
 
-class ImageFilePreviewMessages {
-  final String edit;
-  final String ok;
-  final String readErrorMessage;
-
-  const ImageFilePreviewMessages({
-    this.edit: "edit",
-    this.ok: "ok",
-    this.readErrorMessage: "Could not read images",
-  });
-}
-
 class ImageFilePreviewRoute extends StatefulWidget {
   final String? path;
-  final ImageFilePreviewMessages messages;
   ImageFilePreviewRoute({
     Key? key,
     this.path,
-    this.messages: const ImageFilePreviewMessages(),
   }) : super(key: key);
 
   @override
@@ -50,6 +37,7 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = appLocalizationsWrapper.lang;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -59,13 +47,13 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
             TextButton(
               onPressed: () => crop(context),
               child: Row(
-                children: [Icon(Icons.crop), SizedBox(width: 10), Text(widget.messages.edit)],
+                children: [Icon(Icons.crop), SizedBox(width: 10), Text(lang.edit)],
               ),
             ),
           TextButton(
             onPressed: () => pop(context),
             child: Row(
-              children: [Icon(Icons.done), SizedBox(width: 10), Text(widget.messages.ok)],
+              children: [Icon(Icons.done), SizedBox(width: 10), Text(lang.ok)],
             ),
           ),
         ],
@@ -78,7 +66,7 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
                 var data = snapshot.data;
                 if (data == null) {
                   return Center(
-                    child: AlertVerticalWidget.createDanger(widget.messages.readErrorMessage),
+                    child: AlertVerticalWidget.createDanger(lang.readErrorMessage),
                   );
                 }
                 if (data is String) {
