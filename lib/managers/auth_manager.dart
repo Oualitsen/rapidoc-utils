@@ -54,7 +54,6 @@ class AuthManager<T> {
           save(_user);
         }
       } catch (error) {
-        print("Error = $error");
         if (error is DioError) {
           if (error.response?.statusCode == 403) {
             remove();
