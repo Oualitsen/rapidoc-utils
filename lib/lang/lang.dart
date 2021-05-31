@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rapidoc_multilang/app_localizations.dart';
+import 'package:rapidoc_utils/utils/app_localizations.dart';
 
 final AppLocalizationsWrapper appLocalizationsWrapper = AppLocalizationsWrapper({
   Locale('fr', "FR"): () => French(),

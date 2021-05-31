@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rapidoc_utils/auth_status.dart';
 import 'package:rapidoc_utils/common/FullPageProgress.dart';
-
-enum AuthStatus { STATUS_UNDEFINED, STATUS_LOGGED_OUT, STATUS_PROGRESS, STATUS_LOGGED_IN }
 
 class RouteGuardWidget extends StatelessWidget {
   final Widget Function() childBuilder;
@@ -21,12 +20,12 @@ class RouteGuardWidget extends StatelessWidget {
       stream: authStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.data) {
-          case AuthStatus.STATUS_LOGGED_IN:
+          case AuthStatus.logged_in:
             return childBuilder.call();
 
-          case AuthStatus.STATUS_LOGGED_OUT:
+          case AuthStatus.logged_out:
             return loggedOutBuilder.call();
-          case AuthStatus.STATUS_PROGRESS:
+          case AuthStatus.progress:
             return Scaffold(body: FullPageProgress());
           default:
             return SizedBox();
