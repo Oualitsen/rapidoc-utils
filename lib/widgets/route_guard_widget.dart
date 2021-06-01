@@ -3,8 +3,8 @@ import 'package:rapidoc_utils/auth_status.dart';
 import 'package:rapidoc_utils/common/FullPageProgress.dart';
 
 class RouteGuardWidget extends StatelessWidget {
-  final Widget Function() childBuilder;
-  final Widget Function() loggedOutBuilder;
+  final Widget Function(BuildContext) childBuilder;
+  final Widget Function(BuildContext) loggedOutBuilder;
   final Stream<AuthStatus> authStream;
 
   RouteGuardWidget({
@@ -21,10 +21,10 @@ class RouteGuardWidget extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.data) {
           case AuthStatus.logged_in:
-            return childBuilder.call();
+            return childBuilder(context);
 
           case AuthStatus.logged_out:
-            return loggedOutBuilder.call();
+            return loggedOutBuilder(context);
           case AuthStatus.progress:
             return Scaffold(body: FullPageProgress());
           default:
