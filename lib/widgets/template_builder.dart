@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_responsive_tools/device_screen_type.dart';
 import 'package:flutter_responsive_tools/screen_type_layout.dart';
 
 class TemplateBuilder extends StatelessWidget {
-  final Widget child;
+  final Widget Function(BuildContext context, DeviceScreenType type) childBuilder;
   final Widget Function(BuildContext context) drawerBuilder;
   final AppBar Function(BuildContext context) appBarBuilder;
   final Widget Function(BuildContext context)? topBuilder;
@@ -13,7 +14,7 @@ class TemplateBuilder extends StatelessWidget {
   final EdgeInsets padding;
 
   TemplateBuilder({
-    required this.child,
+    required this.childBuilder,
     required this.drawerBuilder,
     required this.appBarBuilder,
     this.topBuilder,
@@ -27,7 +28,7 @@ class TemplateBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (disable) {
-      return child;
+      return childBuilder(context, DeviceScreenType.mobile);
     }
 
     return ScreenTypeLayout(
@@ -44,7 +45,7 @@ class TemplateBuilder extends StatelessWidget {
                   child: Column(
                     children: [
                       if (topInnerBuilder != null) topInnerBuilder!(context),
-                      Expanded(child: child),
+                      Expanded(child: childBuilder(context, DeviceScreenType.mobile)),
                       if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
                     ],
                   ),
@@ -55,39 +56,68 @@ class TemplateBuilder extends StatelessWidget {
           ],
         ),
       ),
-      tabletBuilder: (context) {
-        return Scaffold(
-          body: Row(
-            children: [
-              drawerBuilder(context),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    if (topBuilder != null) topBuilder!(context),
-                    Expanded(
-                      child: Scaffold(
-                        appBar: appBarBuilder(context),
-                        body: Padding(
-                          padding: padding,
-                          child: Column(
-                            children: [
-                              if (topInnerBuilder != null) topInnerBuilder!(context),
-                              Expanded(child: child),
-                              if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
-                            ],
-                          ),
+      tabletBuilder: (context) => Scaffold(
+        body: Row(
+          children: [
+            drawerBuilder(context),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  if (topBuilder != null) topBuilder!(context),
+                  Expanded(
+                    child: Scaffold(
+                      appBar: appBarBuilder(context),
+                      body: Padding(
+                        padding: padding,
+                        child: Column(
+                          children: [
+                            if (topInnerBuilder != null) topInnerBuilder!(context),
+                            Expanded(child: childBuilder(context, DeviceScreenType.tablet)),
+                            if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
+                          ],
                         ),
                       ),
                     ),
-                    if (bottomBuilder != null) bottomBuilder!(context),
-                  ],
-                ),
+                  ),
+                  if (bottomBuilder != null) bottomBuilder!(context),
+                ],
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
+      desktopBuilder: (context) => Scaffold(
+        body: Row(
+          children: [
+            drawerBuilder(context),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  if (topBuilder != null) topBuilder!(context),
+                  Expanded(
+                    child: Scaffold(
+                      appBar: appBarBuilder(context),
+                      body: Padding(
+                        padding: padding,
+                        child: Column(
+                          children: [
+                            if (topInnerBuilder != null) topInnerBuilder!(context),
+                            Expanded(child: childBuilder(context, DeviceScreenType.desktop)),
+                            if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (bottomBuilder != null) bottomBuilder!(context),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
