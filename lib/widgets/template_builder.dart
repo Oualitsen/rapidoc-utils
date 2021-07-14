@@ -4,12 +4,12 @@ import 'package:flutter_responsive_tools/screen_type_layout.dart';
 
 class TemplateBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, DeviceScreenType type) childBuilder;
-  final Widget Function(BuildContext context) drawerBuilder;
-  final AppBar Function(BuildContext context) appBarBuilder;
-  final Widget Function(BuildContext context)? topBuilder;
-  final Widget Function(BuildContext context)? bottomBuilder;
-  final Widget Function(BuildContext context)? topInnerBuilder;
-  final Widget Function(BuildContext context)? bottomInnerBuilder;
+  final Widget Function(BuildContext context, DeviceScreenType type) drawerBuilder;
+  final AppBar Function(BuildContext context, DeviceScreenType type) appBarBuilder;
+  final Widget Function(BuildContext context, DeviceScreenType type)? topBuilder;
+  final Widget Function(BuildContext context, DeviceScreenType type)? bottomBuilder;
+  final Widget Function(BuildContext context, DeviceScreenType type)? topInnerBuilder;
+  final Widget Function(BuildContext context, DeviceScreenType type)? bottomInnerBuilder;
   final bool disable;
   final EdgeInsets padding;
 
@@ -36,51 +36,41 @@ class TemplateBuilder extends StatelessWidget {
         body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            if (topBuilder != null) topBuilder!(context),
-            Expanded(
-              child: Scaffold(
-                appBar: appBarBuilder(context),
-                body: Padding(
-                  padding: padding,
-                  child: Column(
-                    children: [
-                      if (topInnerBuilder != null) topInnerBuilder!(context),
-                      Expanded(child: childBuilder(context, DeviceScreenType.mobile)),
-                      if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if (bottomBuilder != null) bottomBuilder!(context),
+            if (topBuilder != null) topBuilder!(context, DeviceScreenType.mobile),
+            if (topInnerBuilder != null) topInnerBuilder!(context, DeviceScreenType.mobile),
+            Expanded(child: childBuilder(context, DeviceScreenType.mobile)),
+            if (bottomInnerBuilder != null) bottomInnerBuilder!(context, DeviceScreenType.mobile),
+            if (bottomBuilder != null) bottomBuilder!(context, DeviceScreenType.mobile),
           ],
         ),
       ),
       tabletBuilder: (context) => Scaffold(
         body: Row(
           children: [
-            drawerBuilder(context),
+            drawerBuilder(context, DeviceScreenType.tablet),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (topBuilder != null) topBuilder!(context),
+                  if (topBuilder != null) topBuilder!(context, DeviceScreenType.tablet),
                   Expanded(
                     child: Scaffold(
-                      appBar: appBarBuilder(context),
+                      appBar: appBarBuilder(context, DeviceScreenType.tablet),
                       body: Padding(
                         padding: padding,
                         child: Column(
                           children: [
-                            if (topInnerBuilder != null) topInnerBuilder!(context),
+                            if (topInnerBuilder != null)
+                              topInnerBuilder!(context, DeviceScreenType.tablet),
                             Expanded(child: childBuilder(context, DeviceScreenType.tablet)),
-                            if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
+                            if (bottomInnerBuilder != null)
+                              bottomInnerBuilder!(context, DeviceScreenType.tablet),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  if (bottomBuilder != null) bottomBuilder!(context),
+                  if (bottomBuilder != null) bottomBuilder!(context, DeviceScreenType.tablet),
                 ],
               ),
             ),
@@ -90,28 +80,30 @@ class TemplateBuilder extends StatelessWidget {
       desktopBuilder: (context) => Scaffold(
         body: Row(
           children: [
-            drawerBuilder(context),
+            drawerBuilder(context, DeviceScreenType.desktop),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (topBuilder != null) topBuilder!(context),
+                  if (topBuilder != null) topBuilder!(context, DeviceScreenType.desktop),
                   Expanded(
                     child: Scaffold(
-                      appBar: appBarBuilder(context),
+                      appBar: appBarBuilder(context, DeviceScreenType.desktop),
                       body: Padding(
                         padding: padding,
                         child: Column(
                           children: [
-                            if (topInnerBuilder != null) topInnerBuilder!(context),
+                            if (topInnerBuilder != null)
+                              topInnerBuilder!(context, DeviceScreenType.desktop),
                             Expanded(child: childBuilder(context, DeviceScreenType.desktop)),
-                            if (bottomInnerBuilder != null) bottomInnerBuilder!(context),
+                            if (bottomInnerBuilder != null)
+                              bottomInnerBuilder!(context, DeviceScreenType.desktop),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  if (bottomBuilder != null) bottomBuilder!(context),
+                  if (bottomBuilder != null) bottomBuilder!(context, DeviceScreenType.desktop),
                 ],
               ),
             ),

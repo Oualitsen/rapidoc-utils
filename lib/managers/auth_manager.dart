@@ -26,15 +26,9 @@ class AuthManager<T> {
   }
 
   void _init() async {
+    _subscribe();
+    subject.add(AuthStatus.progress);
     final prefs = await SharedPreferences.getInstance();
-    _subscription = userSubject.listen((value) {
-      if (value == null) {
-        subject.add(AuthStatus.logged_out);
-      } else {
-        subject.add(AuthStatus.logged_in);
-      }
-    });
-
     String? value = prefs.getString(key);
     if (value != null) {
       try {
@@ -44,7 +38,7 @@ class AuthManager<T> {
         /**
          * Could not parse data
          */
-        userSubject.add(null);
+        remove();
       }
     }
     if (getUserFromServer != null) {
@@ -61,6 +55,23 @@ class AuthManager<T> {
         }
       }
     }
+    /**
+     * If it is still in progress mode and could not read anything!
+     */
+
+    if (subject.value == AuthStatus.progress) {
+      subject.add(AuthStatus.logged_out);
+    }
+  }
+
+  void _subscribe() {
+    _subscription = userSubject.listen((value) {
+      if (value == null) {
+        subject.add(AuthStatus.logged_out);
+      } else {
+        subject.add(AuthStatus.logged_in);
+      }
+    });
   }
 
   add(AuthStatus status, [bool force = false]) {

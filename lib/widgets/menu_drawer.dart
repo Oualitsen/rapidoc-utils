@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MenuDrawer extends StatefulWidget {
   final bool collapsible;
 
-  final DrawerHeader? header;
+  final Widget? header;
   final bool hideHeaderOnCollapse;
   final Color background;
   final List<DrawerMenuItem> items;
@@ -36,7 +36,7 @@ class _MenuDrawerState extends State<MenuDrawer> with SingleTickerProviderStateM
 
   final BehaviorSubject<bool> drawerSubject = BehaviorSubject.seeded(false);
 
-  late double width;
+  double width = 0.0;
 
   bool collapsed = false;
 
@@ -71,7 +71,7 @@ class _MenuDrawerState extends State<MenuDrawer> with SingleTickerProviderStateM
         child: ListTile(
           title: getMenuTitleWidget(e.title),
           leading: Icon(
-            Icons.article,
+            e.icon,
             size: iconSize,
           ),
           onTap: e.onTap,
@@ -139,7 +139,7 @@ class _MenuDrawerState extends State<MenuDrawer> with SingleTickerProviderStateM
 class DrawerMenuItem {
   final String title;
   final Function() onTap;
-  final Icon? icon;
+  final IconData? icon;
 
   final String? subtitle;
   final String? tooltipText;

@@ -161,3 +161,23 @@ Future<Position> getCurrentPosition({
     timeLimit: timeLimit,
   ).asStream().first;
 }
+
+Future showAlertDialog(
+    {required BuildContext context, String? title, String? message, List<Widget>? actions}) async {
+  var result = await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title ?? ""),
+      content: Text(message ?? ""),
+      actions: (actions?.isEmpty ?? true)
+          ? <Widget>[
+              TextButton(
+                child: Text(appLocalizationsWrapper.lang.ok.toUpperCase()),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ]
+          : actions,
+    ),
+  );
+  return result;
+}

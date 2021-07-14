@@ -28,6 +28,17 @@ class AppLocalizationsWrapper<T> {
   T get lang => appLocalizations.lang;
 
   Locale get locale => appLocalizations.locale;
+
+  static Locale? find(Iterable<Locale> list, Locale locale) {
+    for (Locale l in list) {
+      if (l.languageCode == locale.languageCode) {
+        if ([null, '', '*', locale.countryCode].contains(l.countryCode)) {
+          return l;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 class AppLocalizations<T> {
@@ -59,14 +70,6 @@ class _AppLocalizationsDelegate<T> extends LocalizationsDelegate<AppLocalization
 
   @override
   bool isSupported(Locale locale) {
-    var keys = langMap.keys;
-    for (Locale l in keys) {
-      if (l.languageCode == locale.languageCode) {
-        if ([null, '', '*', locale.countryCode].contains(l.countryCode)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return AppLocalizationsWrapper.find(langMap.keys, locale) != null;
   }
 }
