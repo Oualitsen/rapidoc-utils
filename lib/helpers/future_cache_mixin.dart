@@ -6,6 +6,7 @@ mixin FutureCacheMixin<T> {
       var r = await getFuture().call();
       _cache = r;
     }
+
     return Future.value(_cache);
   }
 

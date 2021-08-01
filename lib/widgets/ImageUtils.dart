@@ -25,7 +25,7 @@ class ImageUtils {
   }
 
   static Widget fromNetwork(
-    String url, {
+    String? url, {
     double radius: 0.0,
     double? height,
     double? width,
@@ -35,12 +35,16 @@ class ImageUtils {
     Map<String, String>? headers,
     Duration fadeDuration: const Duration(milliseconds: 50),
   }) {
+    if (url == null) {
+      return _setItInContainer(Image.asset(placeHolder ?? 'assets/noimage.png'), width, height);
+    }
+
     var widget = FadeInImage(
       fadeInDuration: fadeDuration,
       fit: BoxFit.fill,
       width: width,
       height: width,
-      placeholder: AssetImage(placeHolder ?? '/assets/noimage.png'),
+      placeholder: AssetImage(placeHolder ?? 'assets/noimage.png'),
       image: NetworkImage(
         url,
         scale: scale,
@@ -52,7 +56,7 @@ class ImageUtils {
   }
 
   static Widget fromNetworkRounded(
-    String url, {
+    String? url, {
     double? height,
     double? width,
     BoxFit? fit,

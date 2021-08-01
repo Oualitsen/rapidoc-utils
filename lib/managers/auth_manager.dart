@@ -27,7 +27,7 @@ class AuthManager<T> {
 
   void _init() async {
     _subscribe();
-    subject.add(AuthStatus.progress);
+    add(AuthStatus.progress);
     final prefs = await SharedPreferences.getInstance();
     String? value = prefs.getString(key);
     if (value != null) {
@@ -60,16 +60,16 @@ class AuthManager<T> {
      */
 
     if (subject.value == AuthStatus.progress) {
-      subject.add(AuthStatus.logged_out);
+      add(AuthStatus.logged_out);
     }
   }
 
   void _subscribe() {
     _subscription = userSubject.listen((value) {
       if (value == null) {
-        subject.add(AuthStatus.logged_out);
+        add(AuthStatus.logged_out);
       } else {
-        subject.add(AuthStatus.logged_in);
+        add(AuthStatus.logged_in);
       }
     });
   }
@@ -107,4 +107,6 @@ class AuthManager<T> {
     subject.close();
     userSubject.close();
   }
+
+
 }

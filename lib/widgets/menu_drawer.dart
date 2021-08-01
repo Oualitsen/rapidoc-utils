@@ -87,6 +87,7 @@ class _MenuDrawerState extends State<MenuDrawer> with SingleTickerProviderStateM
         width: width,
         color: widget.background,
         child: ListView(
+          padding: const EdgeInsets.all(0.0),
           children: children,
         ),
       ),

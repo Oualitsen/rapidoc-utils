@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
-mixin ArgsLoader<T, E> {
+mixin ArgsLoader<T> {
   T? _cache;
 
-  Future<T?> loadArguments(E id);
-
-  E getId();
+  Future<T?> loadArguments();
 
   void initCache(T? value) {
     _cache = value;
@@ -22,7 +20,7 @@ mixin ArgsLoader<T, E> {
       return _cache;
     }
 
-    var result = await loadArguments(getId());
+    var result = await loadArguments();
     _cache = result;
     return _cache;
   }

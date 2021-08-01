@@ -20,8 +20,9 @@ Future<String?> _getImageWeb(context) async {
     ..accept = "image/*";
 
   var completer = Completer<String>();
+
   input.onChange.listen((e) async {
-    if (input.files!.isEmpty) {
+    if (input.files?.isEmpty ?? true) {
       return null;
     }
     final reader = html.FileReader();
@@ -48,7 +49,7 @@ Future<String?> readImagePath({
     return data;
   } else {
     var ip = ImagePicker();
-    PickedFile? image = await ip.getImage(source: source);
+    var image = await ip.getImage(source: source);
 
     if (image != null) {
       data = image.path;
@@ -180,4 +181,34 @@ Future showAlertDialog(
     ),
   );
   return result;
+}
+
+class DialogButtons {
+  static var lang = appLocalizationsWrapper.lang;
+
+  static List<Widget> yesNoButtons(BuildContext context) {
+    return [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(false),
+        child: Text(lang.no.toUpperCase()),
+      ),
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(true),
+        child: Text(lang.yes.toUpperCase()),
+      ),
+    ];
+  }
+
+  static List<Widget> okCancelButtons(BuildContext context) {
+    return [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(false),
+        child: Text(lang.cancel.toUpperCase()),
+      ),
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(true),
+        child: Text(lang.ok.toUpperCase()),
+      ),
+    ];
+  }
 }
