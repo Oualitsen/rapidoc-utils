@@ -187,28 +187,25 @@ class DialogButtons {
   static var lang = appLocalizationsWrapper.lang;
 
   static List<Widget> yesNoButtons(BuildContext context) {
-    return [
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(false),
-        child: Text(lang.no.toUpperCase()),
-      ),
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(true),
-        child: Text(lang.yes.toUpperCase()),
-      ),
-    ];
+    return getButtons(context, {
+      lang.no.toUpperCase(): false,
+      lang.yes.toUpperCase(): true,
+    });
   }
 
   static List<Widget> okCancelButtons(BuildContext context) {
-    return [
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(false),
-        child: Text(lang.cancel.toUpperCase()),
-      ),
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(true),
-        child: Text(lang.ok.toUpperCase()),
-      ),
-    ];
+    return getButtons(context, {
+      lang.cancel.toUpperCase(): false,
+      lang.ok.toUpperCase(): true,
+    });
+  }
+
+  static List<Widget> getButtons(BuildContext context, Map<String, dynamic> map) {
+    return map.keys
+        .map((e) => TextButton(
+              onPressed: () => Navigator.of(context).pop(map[e]),
+              child: Text(e),
+            ))
+        .toList();
   }
 }

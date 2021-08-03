@@ -9,7 +9,13 @@ class ArgsLoaderWidget<T> extends StatefulWidget {
   final Function(BuildContext context, dynamic error)? errorBuilder;
   final Function(BuildContext context)? progressBuilder;
 
-  ArgsLoaderWidget(this.loader, this.builder, {this.errorBuilder, this.progressBuilder});
+  ArgsLoaderWidget({
+    Key? key,
+    required this.loader,
+    required this.builder,
+    this.errorBuilder,
+    this.progressBuilder,
+  }) : super(key: key);
 
   @override
   _ArgsLoaderWidgetState<T> createState() => _ArgsLoaderWidgetState<T>();
@@ -19,12 +25,8 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
   var lang = appLocalizationsWrapper.lang;
 
   final _subject = BehaviorSubject<_Data<T>>();
+  final _loadingSubject = BehaviorSubject.seeded(false);
   bool _firstTime = true;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> _loadData(BuildContext context, [bool? forceRefresh]) async {
     if (!(forceRefresh ?? false)) {
@@ -39,24 +41,35 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
         return;
       }
     }
+    await _doLoadData();
+  }
 
+  Future<void> _doLoadData() async {
     try {
+      _loadingSubject.add(true);
       var result = await widget.loader();
-      _subject.add(_Data(
-        data: result,
-        error: null,
-      ));
+      _subject.add(
+        _Data(
+          data: result,
+          error: null,
+        ),
+      );
     } catch (error) {
-      _subject.add(_Data(
-        data: null,
-        error: error,
-      ));
+      _subject.add(
+        _Data(
+          data: null,
+          error: error,
+        ),
+      );
+    } finally {
+      _loadingSubject.add(false);
     }
   }
 
   @override
   void dispose() {
     _subject.close();
+    _loadingSubject.close();
     super.dispose();
   }
 
@@ -67,6 +80,11 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
       _firstTime = false;
     }
     return StreamBuilder<_Data<T>>(
+      stream: Rx.combineLatest([_subject, _loadingSubject], (values) {
+        var _data = values[0] as _Data<T>;
+        var loading = values[1] as bool;
+        return _Data(data: _data.data, error: _data.error, loading: loading);
+      }),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           if (widget.progressBuilder != null) {
@@ -108,10 +126,10 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
             );
           }
         } else {
-          return _wrapInRefreshIndicator(context, (context) => widget.builder(context, _data.data));
+          return _wrapInRefreshIndicator(
+              context, (context) => widget.builder(context, _data.data));
         }
       },
-      stream: _subject,
     );
   }
 
@@ -120,21 +138,24 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
     Widget Function(BuildContext context) childBuilder,
   ) {
     return RefreshIndicator(
-      child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        child: SizedBox.fromSize(
-          size: MediaQuery.of(context).size,
-          child: childBuilder(context),
-        ),
-      ),
       onRefresh: () => _loadData(context, true),
+      child: childBuilder(context),
     );
+  }
+
+  Future<void> reload() {
+    return _doLoadData();
   }
 }
 
 class _Data<T> {
   final T? data;
   final dynamic error;
+  final bool loading;
 
-  _Data({required this.data, required this.error});
+  _Data({
+    required this.data,
+    required this.error,
+    this.loading: false,
+  });
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+@deprecated
 mixin ArgsLoader<T> {
   T? _cache;
 
