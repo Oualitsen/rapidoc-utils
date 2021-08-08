@@ -8,6 +8,8 @@ class ArgsLoaderWidget<T> extends StatefulWidget {
   final Function(BuildContext context, T? args) builder;
   final Function(BuildContext context, dynamic error)? errorBuilder;
   final Function(BuildContext context)? progressBuilder;
+  final bool ignoreModalRouteArgument;
+  final T? initialData;
 
   ArgsLoaderWidget({
     Key? key,
@@ -15,13 +17,15 @@ class ArgsLoaderWidget<T> extends StatefulWidget {
     required this.builder,
     this.errorBuilder,
     this.progressBuilder,
+    this.ignoreModalRouteArgument: false,
+    this.initialData,
   }) : super(key: key);
 
   @override
-  _ArgsLoaderWidgetState<T> createState() => _ArgsLoaderWidgetState<T>();
+  ArgsLoaderWidgetState<T> createState() => ArgsLoaderWidgetState<T>();
 }
 
-class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
+class ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
   var lang = appLocalizationsWrapper.lang;
 
   final _subject = BehaviorSubject<_Data<T>>();
@@ -29,7 +33,7 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
   bool _firstTime = true;
 
   Future<void> _loadData(BuildContext context, [bool? forceRefresh]) async {
-    if (!(forceRefresh ?? false)) {
+    if (!(forceRefresh ?? false) && !widget.ignoreModalRouteArgument) {
       var args = ModalRoute.of(context)?.settings.arguments as T?;
       if (args != null) {
         _subject.add(
@@ -41,6 +45,17 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
         return;
       }
     }
+
+    if (widget.initialData != null) {
+      _subject.add(
+        _Data(
+          data: widget.initialData!,
+          error: null,
+        ),
+      );
+      return;
+    }
+
     await _doLoadData();
   }
 
@@ -145,6 +160,11 @@ class _ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
 
   Future<void> reload() {
     return _doLoadData();
+  }
+
+  void updateCache(T? data) {
+    print("update cache called!");
+    _subject.add(_Data(data: data, error: null));
   }
 }
 

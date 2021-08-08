@@ -7,7 +7,11 @@ class ImageUtils {
   static const double _maxRadius = 0xFFFFFFFFFF;
 
   static Widget fromMemory(Uint8List bytes,
-      {double radius: 0.0, double? height, double? width, BoxFit? fit, double scale: 1.0}) {
+      {double radius: 0.0,
+      double? height,
+      double? width,
+      BoxFit? fit,
+      double scale: 1.0}) {
     var widget = Image.memory(
       bytes,
       height: height,
@@ -21,7 +25,11 @@ class ImageUtils {
   static Widget fromMemoryRounded(Uint8List bytes,
       {double? height, double? width, BoxFit? fit, double scale: 1.0}) {
     return fromMemory(bytes,
-        height: height, width: width, fit: fit, scale: scale, radius: _maxRadius);
+        height: height,
+        width: width,
+        fit: fit,
+        scale: scale,
+        radius: _maxRadius);
   }
 
   static Widget fromNetwork(
@@ -31,25 +39,53 @@ class ImageUtils {
     double? width,
     BoxFit? fit,
     String? placeHolder,
+    Widget? placeHolderWidget,
     scale: 1.0,
     Map<String, String>? headers,
-    Duration fadeDuration: const Duration(milliseconds: 50),
+    Widget Function(
+      BuildContext context,
+      Widget child,
+      ImageChunkEvent? loadingProgress,
+    )?
+        loadingBuilder,
   }) {
+    assert(placeHolder != null && placeHolderWidget != null,
+        "You need to pass either placeholer or placeHolderWidget. not both");
+
     if (url == null) {
-      return _setItInContainer(Image.asset(placeHolder ?? 'assets/noimage.png'), width, height);
+      return _setItInContainer(
+          placeHolderWidget ?? Image.asset(placeHolder ?? 'assets/noimage.png'),
+          width,
+          height);
     }
 
-    var widget = FadeInImage(
-      fadeInDuration: fadeDuration,
-      fit: BoxFit.fill,
-      width: width,
-      height: width,
-      placeholder: AssetImage(placeHolder ?? 'assets/noimage.png'),
-      image: NetworkImage(
-        url,
-        scale: scale,
-        headers: headers,
-      ),
+    var widget = Image.network(
+      url,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) {
+        return _setItInContainer(
+            placeHolderWidget ??
+                Image.asset(placeHolder ?? 'assets/noimage.png'),
+            width,
+            height);
+      },
+      headers: headers,
+      scale: scale,
+      loadingBuilder: loadingBuilder ??
+          (context, child, loadingProgress) {
+            if (loadingProgress != null &&
+                loadingProgress.expectedTotalBytes != null) {
+              var percent = loadingProgress.cumulativeBytesLoaded /
+                  loadingProgress.expectedTotalBytes!;
+
+              return Center(
+                child: CircularProgressIndicator(
+                  value: percent,
+                ),
+              );
+            }
+            return SizedBox.shrink();
+          },
     );
 
     return _setItInContainer(_addRadius(widget, radius), width, height);
@@ -61,9 +97,15 @@ class ImageUtils {
     double? width,
     BoxFit? fit,
     String? placeHolder,
+    Widget? placeHolderWidget,
     scale: 1.0,
     Map<String, String>? headers,
-    Duration fadeDuration: const Duration(milliseconds: 50),
+    Widget Function(
+      BuildContext context,
+      Widget child,
+      ImageChunkEvent? loadingProgress,
+    )?
+        loadingBuilder,
   }) {
     return fromNetwork(
       url,
@@ -73,8 +115,9 @@ class ImageUtils {
       fit: fit,
       scale: scale,
       placeHolder: placeHolder,
-      fadeDuration: fadeDuration,
+      placeHolderWidget: placeHolderWidget,
       headers: headers,
+      loadingBuilder: loadingBuilder,
     );
   }
 
@@ -105,7 +148,11 @@ class ImageUtils {
     scale: 1.0,
   }) {
     return fromAsset(asset,
-        width: width, height: height, fit: fit, scale: scale, radius: _maxRadius);
+        width: width,
+        height: height,
+        fit: fit,
+        scale: scale,
+        radius: _maxRadius);
   }
 
   static Widget fromFile(
@@ -134,7 +181,12 @@ class ImageUtils {
     BoxFit? fit,
     scale: 1.0,
   }) {
-    return fromFile(file, radius: _maxRadius, height: height, width: width, fit: fit, scale: scale);
+    return fromFile(file,
+        radius: _maxRadius,
+        height: height,
+        width: width,
+        fit: fit,
+        scale: scale);
   }
 
   static Widget _addRadius(Widget widget, double radius) {
