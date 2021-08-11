@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:rapidoc_utils/alerts/alert_info_widget.dart';
+import 'package:rapidoc_utils/lang/lang.dart';
 import 'package:rapidoc_utils/phone_number_input/PhoneCode.dart';
 import 'package:rapidoc_utils/phone_number_input/PhoneNumber.dart';
 import 'package:rapidoc_utils/widgets/args_loader_widget.dart';
@@ -11,20 +12,20 @@ const _persistenceKey = "phoneNumber";
 
 class PhoneNumberInput extends StatefulWidget {
   final PhoneNumber? phoneNumber;
-  final Function(PhoneNumber) onChange;
   final bool persist;
   final Future<List<PhoneCode>?> Function() phoneCodesLoader;
-  final String? errorMessage;
+  final String? loadingCodesErrorMessage;
   final String? hintText;
+  final bool requiredValue;
 
   PhoneNumberInput({
     Key? key,
     this.phoneNumber,
-    required this.onChange,
     required this.phoneCodesLoader,
     this.persist: false,
-    this.errorMessage,
+    this.loadingCodesErrorMessage,
     this.hintText,
+    this.requiredValue: true,
   }) : super(key: key);
 
   @override
@@ -35,6 +36,8 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
   late PhoneNumber _phoneNumber;
 
   late final TextEditingController ctrl;
+  final _key = GlobalKey<FormState>();
+  final lang = appLocalizationsWrapper.lang;
 
   @override
   void initState() {
@@ -69,10 +72,6 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
 
   @override
   Widget build(BuildContext context) {
-    if (_phoneNumber.national.isNotEmpty) {
-      widget.onChange(_phoneNumber);
-    }
-
     return Container(
       child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -90,7 +89,7 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
                         ignoreModalRouteArgument: true,
                         loader: () => widget.phoneCodesLoader(),
                         errorBuilder: (_, __) => AlertInfoWidget.createDanger(
-                            widget.errorMessage ??
+                            widget.loadingCodesErrorMessage ??
                                 "Could not load error codes"),
                         builder: (context, codes) {
                           return ListView(
@@ -126,7 +125,6 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
                 setState(() {
                   _phoneNumber.regionCode = int.parse(code.dial.substring(1));
                   _phoneNumber.region = code.code;
-                  widget.onChange(_phoneNumber);
                 });
               }
             },
@@ -141,18 +139,29 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
                   _phoneNumber = number;
                   ctrl.text = _phoneNumber.national;
 
-                  return TextField(
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    controller: ctrl,
-                    onChanged: (text) {
-                      _phoneNumber.national = text;
-                      widget.onChange(_phoneNumber);
-                      saveValue(_phoneNumber);
-                    },
-                    decoration: InputDecoration(
-                      hintText: widget.hintText ?? "Phone number",
-                      border: OutlineInputBorder(),
+                  return Form(
+                    key: _key,
+                    child: TextFormField(
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      controller: ctrl,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          if (widget.requiredValue) {
+                            return lang.requiredField;
+                          }
+                        }
+
+                        /**
+                         * Try to parse the phone number here!
+                         */
+
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: widget.hintText ?? "",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   );
                 }),
@@ -160,5 +169,19 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
         ],
       ),
     );
+  }
+
+  PhoneNumber? read() {
+    var state = _key.currentState;
+    if (state != null) {
+      if (state.validate()) {
+        _phoneNumber.national = ctrl.text;
+        _phoneNumber.international =
+            "+${_phoneNumber.regionCode}${_phoneNumber.national}";
+
+        return _phoneNumber;
+      }
+    }
+    return null;
   }
 }

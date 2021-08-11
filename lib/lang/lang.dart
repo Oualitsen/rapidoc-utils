@@ -25,6 +25,12 @@ class English {
   String get retry => "Retry";
   String get readErrorMessage => "Could not read image";
   String get dataNotFound => "Not found";
+  String get usePhoneInstead => "Use phone number";
+  String get useEmailInstead => "Use email";
+
+  String get requiredField => "Required field";
+
+  String get invalidEmailFormat => "This email does not look valid";
 }
 
 @protected
