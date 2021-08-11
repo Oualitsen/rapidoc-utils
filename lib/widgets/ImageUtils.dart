@@ -40,7 +40,10 @@ class ImageUtils {
     BoxFit? fit,
     String? placeHolder,
     Widget? placeHolderWidget,
+    ImageRepeat repeat: ImageRepeat.noRepeat,
+    FilterQuality filterQuality: FilterQuality.low,
     scale: 1.0,
+    String? semanticLabel,
     Map<String, String>? headers,
     Widget Function(
       BuildContext context,
@@ -49,9 +52,6 @@ class ImageUtils {
     )?
         loadingBuilder,
   }) {
-    assert(placeHolder != null && placeHolderWidget != null,
-        "You need to pass either placeholer or placeHolderWidget. not both");
-
     if (url == null) {
       return _setItInContainer(
           placeHolderWidget ?? Image.asset(placeHolder ?? 'assets/noimage.png'),
@@ -59,7 +59,7 @@ class ImageUtils {
           height);
     }
 
-    var widget = Image.network(
+    var image = Image.network(
       url,
       fit: fit,
       errorBuilder: (context, error, stackTrace) {
@@ -71,6 +71,11 @@ class ImageUtils {
       },
       headers: headers,
       scale: scale,
+      height: height,
+      width: width,
+      repeat: repeat,
+      filterQuality: filterQuality,
+      semanticLabel: semanticLabel,
       loadingBuilder: loadingBuilder ??
           (context, child, loadingProgress) {
             if (loadingProgress != null &&
@@ -84,11 +89,10 @@ class ImageUtils {
                 ),
               );
             }
-            return SizedBox.shrink();
+            return child;
           },
     );
-
-    return _setItInContainer(_addRadius(widget, radius), width, height);
+    return _setItInContainer(_addRadius(image, radius), width, height);
   }
 
   static Widget fromNetworkRounded(

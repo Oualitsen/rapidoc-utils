@@ -5,9 +5,11 @@ import 'package:rxdart/rxdart.dart';
 
 class ArgsLoaderWidget<T> extends StatefulWidget {
   final Future<T?> Function() loader;
-  final Function(BuildContext context, T? args) builder;
+  final Function(BuildContext context, T args) builder;
   final Function(BuildContext context, dynamic error)? errorBuilder;
   final Function(BuildContext context)? progressBuilder;
+  final Function(BuildContext context)? notFoundBuilder;
+
   final bool ignoreModalRouteArgument;
   final T? initialData;
 
@@ -17,7 +19,8 @@ class ArgsLoaderWidget<T> extends StatefulWidget {
     required this.builder,
     this.errorBuilder,
     this.progressBuilder,
-    this.ignoreModalRouteArgument: false,
+    this.notFoundBuilder,
+    required this.ignoreModalRouteArgument,
     this.initialData,
   }) : super(key: key);
 
@@ -141,8 +144,25 @@ class ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
             );
           }
         } else {
-          return _wrapInRefreshIndicator(
-              context, (context) => widget.builder(context, _data.data));
+          var data = _data.data;
+          if (data == null) {
+            if (widget.notFoundBuilder != null) {
+              return _wrapInRefreshIndicator(
+                  context, (context) => widget.notFoundBuilder!(context));
+            } else {
+              return _wrapInRefreshIndicator(
+                context,
+                (context) => AlertVerticalWidget.createDanger(
+                  lang.dataNotFound,
+                ),
+              );
+            }
+          } else {
+            return _wrapInRefreshIndicator(
+              context,
+              (context) => widget.builder(context, data),
+            );
+          }
         }
       },
     );
@@ -163,9 +183,10 @@ class ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
   }
 
   void updateCache(T? data) {
-    print("update cache called!");
     _subject.add(_Data(data: data, error: null));
   }
+
+  T? get currentValue => _subject.valueOrNull?.data;
 }
 
 class _Data<T> {

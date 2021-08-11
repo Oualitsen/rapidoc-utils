@@ -1,18 +1,19 @@
-part 'UtilsPhoneNumber.g.dart';
+part 'PhoneNumber.g.dart';
 
-class UtilsPhoneNumber {
+class PhoneNumber {
   String region = "";
   int regionCode = 213;
   String national = "";
   String international = "";
-  UtilsPhoneNumber({
+  PhoneNumber({
     this.regionCode: 213,
     this.international: "",
     this.national: "",
     this.region: "DZ",
   });
 
-  factory UtilsPhoneNumber.fromJson(Map<String, dynamic> json) => _$PhoneNumberFromJson(json);
+  factory PhoneNumber.fromJson(Map<String, dynamic> json) =>
+      _$PhoneNumberFromJson(json);
 
   Map<String, dynamic> toJson() => _$PhoneNumberToJson(this);
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rapidoc_utils/utils/app_localizations.dart';
 
-final AppLocalizationsWrapper<English> appLocalizationsWrapper = AppLocalizationsWrapper({
+final AppLocalizationsWrapper<English> appLocalizationsWrapper =
+    AppLocalizationsWrapper({
   Locale('fr', "FR"): () => French(),
   Locale('ar', "DZ"): () => Arabic(),
   Locale('en', "US"): () => English(),
@@ -23,6 +24,7 @@ class English {
   String get serverErrorTitle => "Server error";
   String get retry => "Retry";
   String get readErrorMessage => "Could not read image";
+  String get dataNotFound => "Not found";
 }
 
 @protected

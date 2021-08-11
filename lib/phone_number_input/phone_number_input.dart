@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:rapidoc_utils/alerts/alert_info_widget.dart';
-import 'package:rapidoc_utils/common/FullPageProgress.dart';
 import 'package:rapidoc_utils/phone_number_input/PhoneCode.dart';
-import 'package:rapidoc_utils/phone_number_input/UtilsPhoneNumber.dart';
+import 'package:rapidoc_utils/phone_number_input/PhoneNumber.dart';
+import 'package:rapidoc_utils/widgets/args_loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _persistenceKey = "phoneNumber";
 
 class PhoneNumberInput extends StatefulWidget {
-  final UtilsPhoneNumber? phoneNumber;
-  final Function(UtilsPhoneNumber) onChange;
+  final PhoneNumber? phoneNumber;
+  final Function(PhoneNumber) onChange;
   final bool persist;
   final Future<List<PhoneCode>?> Function() phoneCodesLoader;
   final String? errorMessage;
@@ -32,32 +32,33 @@ class PhoneNumberInput extends StatefulWidget {
 }
 
 class PhoneNumberInputState extends State<PhoneNumberInput> {
-  late UtilsPhoneNumber _phoneNumber;
+  late PhoneNumber _phoneNumber;
 
   late final TextEditingController ctrl;
 
   @override
   void initState() {
     super.initState();
-    _phoneNumber = widget.phoneNumber ?? UtilsPhoneNumber(region: "DZ", regionCode: 213);
+    _phoneNumber =
+        widget.phoneNumber ?? PhoneNumber(region: "DZ", regionCode: 213);
     ctrl = TextEditingController();
     ctrl.text = _phoneNumber.national;
   }
 
-  Future<void> saveValue(UtilsPhoneNumber phone) async {
+  Future<void> saveValue(PhoneNumber phone) async {
     if (widget.persist) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_persistenceKey, jsonEncode(phone.toJson()));
     }
   }
 
-  Future<UtilsPhoneNumber> readValue() async {
+  Future<PhoneNumber> readValue() async {
     if (widget.persist && widget.phoneNumber == null) {
       final prefs = await SharedPreferences.getInstance();
       String? phoneNumber = prefs.getString(_persistenceKey);
       try {
         if (phoneNumber != null) {
-          return (UtilsPhoneNumber.fromJson(jsonDecode(phoneNumber)));
+          return (PhoneNumber.fromJson(jsonDecode(phoneNumber)));
         }
       } catch (error) {
         print("Error $error");
@@ -78,47 +79,44 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
         children: [
           OutlinedButton(
             child: Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10),
+              padding: const EdgeInsets.only(
+                  top: 20, bottom: 20, left: 10, right: 10),
               child: Text("+${_phoneNumber.regionCode}"),
             ),
             onPressed: () async {
               var result = await showModalBottomSheet(
                   builder: (context) {
-                    return FutureBuilder<List<PhoneCode>?>(
-                        future: widget.phoneCodesLoader(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return AlertInfoWidget.createDanger(
-                                widget.errorMessage ?? "Could not load error codes");
-                          }
-                          if (snapshot.connectionState == ConnectionState.done) {
-                            var codes = snapshot.data ?? <PhoneCode>[];
-                            return ListView(
-                              children: codes
-                                  .map(
-                                    (code) => ListTile(
-                                      leading: code.flagUrl == null
-                                          ? SizedBox.shrink()
-                                          : ClipRRect(
-                                              borderRadius: BorderRadius.circular(0xFFFFFFFFFF),
-                                              child: Image.network(
-                                                code.flagUrl!,
-                                                width: 64,
-                                                height: 64,
-                                              ),
+                    return ArgsLoaderWidget<List<PhoneCode>>(
+                        ignoreModalRouteArgument: true,
+                        loader: () => widget.phoneCodesLoader(),
+                        errorBuilder: (_, __) => AlertInfoWidget.createDanger(
+                            widget.errorMessage ??
+                                "Could not load error codes"),
+                        builder: (context, codes) {
+                          return ListView(
+                            children: codes
+                                .map(
+                                  (code) => ListTile(
+                                    leading: code.flagUrl == null
+                                        ? SizedBox.shrink()
+                                        : ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                0xFFFFFFFFFF),
+                                            child: Image.network(
+                                              code.flagUrl!,
+                                              width: 64,
+                                              height: 64,
                                             ),
-                                      title: Text(code.dial),
-                                      subtitle: Text(code.name),
-                                      onTap: () {
-                                        Navigator.of(context).pop(code);
-                                      },
-                                    ),
-                                  )
-                                  .toList(),
-                            );
-                          }
-
-                          return FullPageProgress();
+                                          ),
+                                    title: Text(code.dial),
+                                    subtitle: Text(code.name),
+                                    onTap: () {
+                                      Navigator.of(context).pop(code);
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          );
                         });
                   },
                   context: context);
@@ -135,13 +133,12 @@ class PhoneNumberInputState extends State<PhoneNumberInput> {
           ),
           SizedBox(width: 5),
           Expanded(
-            child: FutureBuilder<UtilsPhoneNumber>(
-                future: readValue(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return SizedBox.shrink();
-                  }
-                  _phoneNumber = snapshot.data!;
+            child: ArgsLoaderWidget<PhoneNumber>(
+                ignoreModalRouteArgument: true,
+                loader: () => readValue(),
+                progressBuilder: (_) => SizedBox.shrink(),
+                builder: (context, number) {
+                  _phoneNumber = number;
                   ctrl.text = _phoneNumber.national;
 
                   return TextField(

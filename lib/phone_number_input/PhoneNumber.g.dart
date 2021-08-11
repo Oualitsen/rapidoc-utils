@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'UtilsPhoneNumber.dart';
+part of 'PhoneNumber.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UtilsPhoneNumber _$PhoneNumberFromJson(Map<String, dynamic> json) {
-  return UtilsPhoneNumber(
+PhoneNumber _$PhoneNumberFromJson(Map<String, dynamic> json) {
+  return PhoneNumber(
     regionCode: json['regionCode'] as int? ?? 213,
     international: json['international'] as String? ?? '',
     national: json['national'] as String? ?? '',
@@ -15,7 +15,8 @@ UtilsPhoneNumber _$PhoneNumberFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PhoneNumberToJson(UtilsPhoneNumber instance) => <String, dynamic>{
+Map<String, dynamic> _$PhoneNumberToJson(PhoneNumber instance) =>
+    <String, dynamic>{
       'region': instance.region,
       'regionCode': instance.regionCode,
       'national': instance.national,
