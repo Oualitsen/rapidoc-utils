@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:error_handler/error_handler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rapidoc_utils/alerts/alert_vertical_widget.dart';
 import 'package:rapidoc_utils/lang/lang.dart';
 import 'package:rapidoc_utils/routes/image_file_preview.dart';
-import 'package:rapidoc_utils/utils/error_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:universal_html/html.dart' as html;
 
 Future<String?> _getImageWeb(context) async {
-  final html.InputElement input = html.document.createElement("input") as html.InputElement;
+  final html.InputElement input =
+      html.document.createElement("input") as html.InputElement;
   input
     ..type = "file"
     ..accept = "image/*";
@@ -69,7 +70,9 @@ Future<String?> readImagePath({
     var result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => kIsWeb ? ImageFilePreviewRoute() : ImageFilePreviewRoute(path: data),
+        builder: (context) => kIsWeb
+            ? ImageFilePreviewRoute()
+            : ImageFilePreviewRoute(path: data),
       ),
     );
     return result;
@@ -90,7 +93,8 @@ Future<T?> safeCall<T>(Future<T> future, [BuildContext? context]) async {
   return null;
 }
 
-Widget errorWidget(BuildContext context, {Function()? callback, Object? error}) {
+Widget errorWidget(BuildContext context,
+    {Function()? callback, Object? error}) {
   var lang = appLocalizationsWrapper.lang;
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +145,8 @@ Future<Uint8List?> getImageFromLocalStorage() async {
   var prefs = await SharedPreferences.getInstance();
   String? base = prefs.getString(LOC_STORAGE_KEY);
   if (base != null) {
-    return base64.decode(base.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), ''));
+    return base64
+        .decode(base.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), ''));
   }
   return null;
 }
@@ -164,7 +169,10 @@ Future<Position> getCurrentPosition({
 }
 
 Future showAlertDialog(
-    {required BuildContext context, String? title, String? message, List<Widget>? actions}) async {
+    {required BuildContext context,
+    String? title,
+    String? message,
+    List<Widget>? actions}) async {
   var result = await showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -200,7 +208,8 @@ class DialogButtons {
     });
   }
 
-  static List<Widget> getButtons(BuildContext context, Map<String, dynamic> map) {
+  static List<Widget> getButtons(
+      BuildContext context, Map<String, dynamic> map) {
     return map.keys
         .map((e) => TextButton(
               onPressed: () => Navigator.of(context).pop(map[e]),

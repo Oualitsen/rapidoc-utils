@@ -1,5 +1,4 @@
 import 'dart:math' as Math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rxdart/rxdart.dart';
@@ -7,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 class ImageViewRouteArgs {
   final List<String> images;
   final String? startBy;
+  final Map<String, String>? headers;
 
   bool get valid => images.isNotEmpty;
 
@@ -19,7 +19,7 @@ class ImageViewRouteArgs {
     return result == -1 ? 0 : result;
   }
 
-  ImageViewRouteArgs({required this.images, this.startBy});
+  ImageViewRouteArgs({required this.images, this.startBy, this.headers});
 }
 
 class ImageViewRoute extends StatefulWidget {
@@ -30,7 +30,8 @@ class ImageViewRoute extends StatefulWidget {
   _ImageViewRouteState createState() => _ImageViewRouteState();
 }
 
-class _ImageViewRouteState extends State<ImageViewRoute> with TickerProviderStateMixin {
+class _ImageViewRouteState extends State<ImageViewRoute>
+    with TickerProviderStateMixin {
   late TabController tabController;
   final BehaviorSubject<int> subject = BehaviorSubject();
   final BehaviorSubject<double> angleSubject = BehaviorSubject();
@@ -39,7 +40,9 @@ class _ImageViewRouteState extends State<ImageViewRoute> with TickerProviderStat
   void initState() {
     super.initState();
     tabController = TabController(
-        length: widget.args.images.length, vsync: this, initialIndex: widget.args.startIndex);
+        length: widget.args.images.length,
+        vsync: this,
+        initialIndex: widget.args.startIndex);
 
     tabController.addListener(() {
       subject.add(tabController.index);
@@ -74,7 +77,8 @@ class _ImageViewRouteState extends State<ImageViewRoute> with TickerProviderStat
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Color.fromARGB(0xFF, 0xCC, 0xCC, 0xCC)),
+          iconTheme:
+              IconThemeData(color: Color.fromARGB(0xFF, 0xCC, 0xCC, 0xCC)),
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
@@ -96,8 +100,8 @@ class _ImageViewRouteState extends State<ImageViewRoute> with TickerProviderStat
           children: [
             TabBarView(
               controller: tabController,
-              children: List<String>.generate(
-                  widget.args.images.length, (index) => widget.args.images[index]).map((url) {
+              children: List<String>.generate(widget.args.images.length,
+                  (index) => widget.args.images[index]).map((url) {
                 return StreamBuilder<double>(
                     stream: angleSubject,
                     initialData: angleSubject.valueOrNull,
@@ -105,7 +109,8 @@ class _ImageViewRouteState extends State<ImageViewRoute> with TickerProviderStat
                       return Transform.rotate(
                         angle: snapshot.data!,
                         child: PhotoView(
-                          imageProvider: NetworkImage(url),
+                          imageProvider:
+                              NetworkImage(url, headers: widget.args.headers),
                         ),
                       );
                     });
@@ -163,13 +168,15 @@ class _ImageViewRouteState extends State<ImageViewRoute> with TickerProviderStat
                       children: widget.args.images.map((url) {
                         return InkWell(
                           onTap: () {
-                            tabController.animateTo(widget.args.images.indexOf(url));
+                            tabController
+                                .animateTo(widget.args.images.indexOf(url));
                           },
                           child: Icon(
                             Icons.fiber_manual_record,
-                            color: widget.args.images.indexOf(url) == snapshot.data
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey,
+                            color:
+                                widget.args.images.indexOf(url) == snapshot.data
+                                    ? Theme.of(context).primaryColor
+                                    : Colors.grey,
                           ),
                         );
                       }).toList(),

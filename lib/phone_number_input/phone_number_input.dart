@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rapidoc_utils/alerts/alert_info_widget.dart';
 import 'package:rapidoc_utils/lang/lang.dart';
-import 'package:rapidoc_utils/phone_number_input/PhoneCode.dart';
-import 'package:rapidoc_utils/phone_number_input/PhoneNumber.dart';
+import 'package:rapidoc_utils/phone_number_input/phone_code.dart';
+import 'package:rapidoc_utils/phone_number_input/phone_number.dart';
 import 'package:rapidoc_utils/widgets/args_loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rapidoc_utils/auth_status.dart';
-import 'package:rapidoc_utils/common/FullPageProgress.dart';
+import 'package:rapidoc_utils/common/full_page_progress.dart';
 
 class RouteGuardWidget extends StatelessWidget {
   final Widget Function(BuildContext) childBuilder;

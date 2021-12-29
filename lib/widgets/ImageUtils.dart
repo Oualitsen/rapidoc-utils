@@ -19,7 +19,7 @@ class ImageUtils {
       fit: fit,
       scale: scale,
     );
-    return _setItInContainer(_addRadius(widget, radius), width, height);
+    return _setItInContainer(_addRadius(widget, radius, width, height), width, height);
   }
 
   static Widget fromMemoryRounded(Uint8List bytes,
@@ -92,7 +92,7 @@ class ImageUtils {
             return child;
           },
     );
-    return _setItInContainer(_addRadius(image, radius), width, height);
+    return _setItInContainer(_addRadius(image, radius, width, height), width, height);
   }
 
   static Widget fromNetworkRounded(
@@ -141,7 +141,7 @@ class ImageUtils {
       height: height,
     );
 
-    return _setItInContainer(_addRadius(widget, radius), width, height);
+    return _setItInContainer(_addRadius(widget, radius, width, height), width, height);
   }
 
   static Widget fromAssetRounded(
@@ -174,7 +174,7 @@ class ImageUtils {
       width: width,
       height: height,
     );
-    return _setItInContainer(_addRadius(widget, radius), width, height);
+    return _setItInContainer(_addRadius(widget, radius, width, height), width, height);
   }
 
   static Widget fromFileRounded(
@@ -193,14 +193,28 @@ class ImageUtils {
         scale: scale);
   }
 
-  static Widget _addRadius(Widget widget, double radius) {
+  static Widget _addRadius(Widget widget, double radius, double? width, double? height) {
     if (radius == 0) {
       return widget;
     } else {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: widget,
-      );
+
+      if(width != null || height != null) {
+
+       return ClipRRect(
+          borderRadius: BorderRadius.circular(radius),
+
+          child: SizedBox(child: widget, width: width, height: height,),
+        );
+      }else {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(radius),
+          child: widget,
+        );
+      }
+
+
+
+
     }
   }
 

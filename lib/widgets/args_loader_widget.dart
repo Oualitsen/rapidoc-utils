@@ -135,7 +135,7 @@ class ArgsLoaderWidgetState<T> extends State<ArgsLoaderWidget<T>> {
                       onPressed: () => _loadData(context, true),
                       icon: Icon(
                         Icons.refresh,
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ],

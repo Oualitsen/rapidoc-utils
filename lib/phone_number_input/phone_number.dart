@@ -1,5 +1,7 @@
-part 'PhoneNumber.g.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'phone_number.g.dart';
 
+@JsonSerializable()
 class PhoneNumber {
   String region = "";
   int regionCode = 213;

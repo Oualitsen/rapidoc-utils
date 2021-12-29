@@ -25,7 +25,8 @@ class MenuDrawer extends StatefulWidget {
   _MenuDrawerState createState() => _MenuDrawerState();
 }
 
-class _MenuDrawerState extends State<MenuDrawer> with SingleTickerProviderStateMixin {
+class _MenuDrawerState extends State<MenuDrawer>
+    with SingleTickerProviderStateMixin {
   final _drawerStateKey = "_drawer_state";
 
   final double collapsedSize = 80;
@@ -81,7 +82,6 @@ class _MenuDrawerState extends State<MenuDrawer> with SingleTickerProviderStateM
 
     return AnimatedSize(
       curve: Curves.easeIn,
-      vsync: this,
       duration: Duration(milliseconds: 100),
       child: Container(
         width: width,

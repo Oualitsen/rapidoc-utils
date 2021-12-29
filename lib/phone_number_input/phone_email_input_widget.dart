@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rapidoc_utils/alerts/alert_info_widget.dart';
 import 'package:rapidoc_utils/lang/lang.dart';
-import 'package:rapidoc_utils/phone_number_input/PhoneCode.dart';
-import 'package:rapidoc_utils/phone_number_input/PhoneNumber.dart';
+import 'package:rapidoc_utils/phone_number_input/phone_code.dart';
+import 'package:rapidoc_utils/phone_number_input/phone_number.dart';
 import 'package:rapidoc_utils/phone_number_input/email_input_widget.dart';
 import 'package:rapidoc_utils/phone_number_input/phone_number_input.dart';
 import 'package:rxdart/rxdart.dart';

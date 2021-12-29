@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthManager<T> {
   final String key = 'auth_manager_user_key';
-  final BehaviorSubject<AuthStatus> subject = BehaviorSubject.seeded(AuthStatus.undefined);
+  final BehaviorSubject<AuthStatus> subject =
+      BehaviorSubject.seeded(AuthStatus.undefined);
 
   final BehaviorSubject<T?> userSubject = BehaviorSubject();
 
@@ -86,7 +87,7 @@ class AuthManager<T> {
     return subject.value == AuthStatus.logged_in;
   }
 
-  save(T? user) async {
+  Future<void> save(T? user) async {
     if (user != null) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(key, json.encode(serializer(user)));
@@ -107,6 +108,4 @@ class AuthManager<T> {
     subject.close();
     userSubject.close();
   }
-
-
 }

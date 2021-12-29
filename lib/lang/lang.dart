@@ -3,9 +3,9 @@ import 'package:rapidoc_utils/utils/app_localizations.dart';
 
 final AppLocalizationsWrapper<English> appLocalizationsWrapper =
     AppLocalizationsWrapper({
-  Locale('fr', "FR"): () => French(),
-  Locale('ar', "DZ"): () => Arabic(),
-  Locale('en', "US"): () => English(),
+  Locale('fr', ''): () => French(),
+  Locale('ar', ''): () => Arabic(),
+  Locale('en', ''): () => English(),
 });
 
 @protected

@@ -7,22 +7,27 @@ class CodeInputWidget extends StatefulWidget {
   final int timeout;
 
   CodeInputWidget({
+    Key? key,
     required this.onCodeRead,
     this.onTimeout,
     this.onTick,
     this.timeout = 30,
-  });
+  }) : super(key: key);
 
   @override
-  _CodeInputWidgetState createState() => _CodeInputWidgetState();
+  CodeInputWidgetState createState() => CodeInputWidgetState();
 }
 
-class _CodeInputWidgetState extends State<CodeInputWidget> {
+class CodeInputWidgetState extends State<CodeInputWidget> {
   late Stream<int> _period;
 
+  final List<TextEditingController> controllers = [];
+
   final List<FocusNode> focusNodes = [];
-  final array = [];
+  final array = <String>[];
   final List<TextFormField> fields = [];
+
+  final _key = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -31,10 +36,11 @@ class _CodeInputWidgetState extends State<CodeInputWidget> {
     for (int i = 0; i < 6; i++) {
       focusNodes.add(FocusNode());
       array.add("");
+      controllers.add(TextEditingController());
     }
     var onTimeout = widget.onTimeout;
-    _period =
-        Stream.periodic(Duration(seconds: 1), (x) => widget.timeout - x).take(widget.timeout + 1);
+    _period = Stream.periodic(Duration(seconds: 1), (x) => widget.timeout - x)
+        .take(widget.timeout + 1);
     if (onTimeout != null) {
       _period.where((event) => event == 0).listen((event) => onTimeout());
     }
@@ -50,6 +56,7 @@ class _CodeInputWidgetState extends State<CodeInputWidget> {
     for (int i = 0; i < 6; i++) {
       fields.add(
         TextFormField(
+          controller: controllers[i],
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             counterText: '',
@@ -57,6 +64,7 @@ class _CodeInputWidgetState extends State<CodeInputWidget> {
           focusNode: focusNodes[i],
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
+          validator: _validator,
           maxLength: 1,
           onChanged: (text) {
             array[i] = text;
@@ -81,7 +89,7 @@ class _CodeInputWidgetState extends State<CodeInputWidget> {
     return Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
-          key: GlobalKey(),
+          key: _key,
           child: Row(
             children: [
               for (int i = 0; i < 6; i++)
@@ -101,5 +109,15 @@ class _CodeInputWidgetState extends State<CodeInputWidget> {
             ],
           ),
         ));
+  }
+
+  String? _validator(String? text) => (text?.isEmpty ?? false) ? "" : null;
+
+  String? read() {
+    var _state = _key.currentState;
+    if (_state != null && _state.validate()) {
+      return array.join("");
+    }
+    return null;
   }
 }
