@@ -1,6 +1,6 @@
 name: rapidoc_utils
 description: Some common used classes
-version: 0.0.9
+version: 0.0.10
 
 homepage: "https://rapidoc.app"
 repository: "https://github.com/Oualitsen/rapidoc-utils"
@@ -19,9 +19,7 @@ dependencies:
   universal_html: ^2.0.8
   geolocator: ^8.0.1
   flutter_responsive_tools: ^0.0.1
-  error_handler:
-    path: ../error_handler
-
+  http_error_handler:
 
 dev_dependencies:
   flutter_test:

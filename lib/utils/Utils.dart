@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:error_handler/error_handler.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http_error_handler/error_handler.dart';
 import 'package:rapidoc_utils/alerts/alert_vertical_widget.dart';
 import 'package:rapidoc_utils/lang/lang.dart';
 import 'package:rapidoc_utils/routes/image_file_preview.dart';
