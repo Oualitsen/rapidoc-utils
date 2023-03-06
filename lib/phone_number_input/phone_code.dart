@@ -1,7 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
 part 'phone_code.g.dart';
 
-@JsonSerializable()
+//@JsonSerializable()
 class PhoneCode {
   String name = "";
   String dial = "";

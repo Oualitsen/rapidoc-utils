@@ -59,6 +59,8 @@ class CodeInputWidgetState extends State<CodeInputWidget> {
           controller: controllers[i],
           decoration: InputDecoration(
             border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Theme.of(context).primaryColor)),
             counterText: '',
           ),
           focusNode: focusNodes[i],

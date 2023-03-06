@@ -35,11 +35,15 @@ class AuthManager<T> {
       try {
         T user = parser(json.decode(value));
         userSubject.add(user);
+        add(AuthStatus.logged_in);
       } catch (error) {
         /**
          * Could not parse data
          */
         remove();
+        if (getUserFromServer == null) {
+          add(AuthStatus.logged_out);
+        }
       }
     }
     if (getUserFromServer != null) {
@@ -52,6 +56,7 @@ class AuthManager<T> {
         if (error is DioError) {
           if (error.response?.statusCode == 403) {
             remove();
+            add(AuthStatus.logged_out);
           }
         }
       }

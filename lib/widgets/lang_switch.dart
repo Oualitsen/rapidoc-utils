@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rapidoc_utils/widgets/ImageUtils.dart';
+import 'package:rapidoc_utils/widgets/image_utils.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

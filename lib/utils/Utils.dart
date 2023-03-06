@@ -50,34 +50,13 @@ Future<String?> readImagePath({
     return data;
   } else {
     var ip = ImagePicker();
-    var image = await ip.getImage(source: source);
-
-    if (image != null) {
-      data = image.path;
-    } else {
-      return null;
-    }
-  }
-
-  var prefs = await SharedPreferences.getInstance();
-
-  if (kIsWeb) {
-    prefs.setString(LOC_STORAGE_KEY, data);
-    data = LOC_STORAGE_KEY;
-  }
-
-  if (preview) {
-    var result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => kIsWeb
-            ? ImageFilePreviewRoute()
-            : ImageFilePreviewRoute(path: data),
-      ),
-    );
-    return result;
-  } else {
-    return data;
+    return ip
+        .pickImage(source: source)
+        .asStream()
+        .where((event) => event != null)
+        .map((event) => event!)
+        .map((event) => event.path)
+        .first;
   }
 }
 

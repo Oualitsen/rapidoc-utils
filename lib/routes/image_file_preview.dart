@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +46,11 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
             TextButton(
               onPressed: () => crop(context),
               child: Row(
-                children: [Icon(Icons.crop), SizedBox(width: 10), Text(lang.edit)],
+                children: [
+                  Icon(Icons.crop),
+                  SizedBox(width: 10),
+                  Text(lang.edit)
+                ],
               ),
             ),
           TextButton(
@@ -66,7 +69,8 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
                 var data = snapshot.data;
                 if (data == null) {
                   return Center(
-                    child: AlertVerticalWidget.createDanger(lang.readErrorMessage),
+                    child:
+                        AlertVerticalWidget.createDanger(lang.readErrorMessage),
                   );
                 }
                 if (data is String) {
@@ -105,26 +109,26 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
        * Unsupported operation!
        */
     } else {
-      File? croppedFile = await ImageCropper.cropImage(
-        sourcePath: widget.path!,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9,
-        ],
-        androidUiSettings: AndroidUiSettings(
+      var imageCropper = ImageCropper();
+      CroppedFile? croppedFile = await imageCropper
+          .cropImage(sourcePath: widget.path!, aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9,
+      ], uiSettings: [
+        AndroidUiSettings(
           toolbarTitle: 'Cropper',
           toolbarColor: Theme.of(context).primaryColor,
           toolbarWidgetColor: Theme.of(context).textTheme.bodyText1!.color,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
-        iosUiSettings: IOSUiSettings(
+        IOSUiSettings(
           minimumAspectRatio: 1.0,
         ),
-      );
+      ]);
       if (croppedFile != null) {
         imagePath = croppedFile.path;
         setState(() {});
@@ -136,7 +140,8 @@ class _ImageFilePreviewRouteState extends State<ImageFilePreviewRoute> {
     var prefs = await SharedPreferences.getInstance();
     String? base = prefs.getString(LOC_STORAGE_KEY);
     if (base != null) {
-      return base64.decode(base.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), ''));
+      return base64
+          .decode(base.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), ''));
     }
     return null;
   }

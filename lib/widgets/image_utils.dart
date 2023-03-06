@@ -19,7 +19,8 @@ class ImageUtils {
       fit: fit,
       scale: scale,
     );
-    return _setItInContainer(_addRadius(widget, radius, width, height), width, height);
+    return _setItInContainer(
+        _addRadius(widget, radius, width, height), width, height);
   }
 
   static Widget fromMemoryRounded(Uint8List bytes,
@@ -92,14 +93,14 @@ class ImageUtils {
             return child;
           },
     );
-    return _setItInContainer(_addRadius(image, radius, width, height), width, height);
+    return _setItInContainer(
+        _addRadius(image, radius, width, height), width, height);
   }
 
   static Widget fromNetworkRounded(
     String? url, {
     double? height,
     double? width,
-    BoxFit? fit,
     String? placeHolder,
     Widget? placeHolderWidget,
     scale: 1.0,
@@ -116,7 +117,7 @@ class ImageUtils {
       width: width,
       height: height,
       radius: _maxRadius,
-      fit: fit,
+      fit: BoxFit.cover,
       scale: scale,
       placeHolder: placeHolder,
       placeHolderWidget: placeHolderWidget,
@@ -141,7 +142,8 @@ class ImageUtils {
       height: height,
     );
 
-    return _setItInContainer(_addRadius(widget, radius, width, height), width, height);
+    return _setItInContainer(
+        _addRadius(widget, radius, width, height), width, height);
   }
 
   static Widget fromAssetRounded(
@@ -174,7 +176,8 @@ class ImageUtils {
       width: width,
       height: height,
     );
-    return _setItInContainer(_addRadius(widget, radius, width, height), width, height);
+    return _setItInContainer(
+        _addRadius(widget, radius, width, height), width, height);
   }
 
   static Widget fromFileRounded(
@@ -193,28 +196,15 @@ class ImageUtils {
         scale: scale);
   }
 
-  static Widget _addRadius(Widget widget, double radius, double? width, double? height) {
+  static Widget _addRadius(
+      Widget widget, double radius, double? width, double? height) {
     if (radius == 0) {
       return widget;
     } else {
-
-      if(width != null || height != null) {
-
-       return ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
-
-          child: SizedBox(child: widget, width: width, height: height,),
-        );
-      }else {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
-          child: widget,
-        );
-      }
-
-
-
-
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: widget,
+      );
     }
   }
 
